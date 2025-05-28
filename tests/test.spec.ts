@@ -12,12 +12,13 @@ const customTimeout = process.env.CUSTOM_TIMEOUT;
 test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
   if (!tutorialPaths) throw new Error("TUTORIAL_PATHS not set");
   if (!configPath) throw new Error("CONFIG_PATH not set");
-  const tutorials = JSON.parse(tutorialPaths);
-  console.log("tutorials:", tutorials);
+//   const tutorials = JSON.parse(tutorialPaths);
+  console.log("tutorials:", tutorialPaths);
+//   console.log("tutorials:", tutorials);
 
+console.log("configPath:", configPath);
   const file = existsSync(configPath);
   console.log("file:", file);
-  console.log("configPath:", configPath);
 
   //   const testConfig = JSON.parse(readFileSync(path.resolve(configPath), "utf8"));
   //   console.log("e2eConfig:", testConfig);
