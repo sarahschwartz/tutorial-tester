@@ -20,6 +20,7 @@ runs:
   steps:
     - name: Ensure Bun deps
       shell: bash
+      working-directory: ${{ github.action_path }}
       run: bun install --frozen-lockfile
     - name: Show where we are
       shell: bash
