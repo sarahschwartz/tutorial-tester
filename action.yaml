@@ -7,6 +7,10 @@ inputs:
   config-path:
     description: Filepath of the test configuration file. Expects an IStepConfig type to be exported as default in the file.
     required: true
+  folder-name:
+    description: Name of the folder where the generated test files are output. Defaults to 'tests-output'.
+    required: false
+    default: 'tests-output'
   custom-timeout:
     description: Number of milliseconds to wait for the test to complete. Defaults to what's in your playwright config.
     required: false
