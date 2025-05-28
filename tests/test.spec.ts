@@ -4,27 +4,29 @@ import {
   existsSync,
   // readFileSync
 } from "fs";
-// import path from "path";
+import { join } from "path";
 
 const tutorialPaths = process.env.TUTORIAL_PATHS;
 const configPath = process.env.CONFIG_PATH;
 const customTimeout = process.env.CUSTOM_TIMEOUT;
+const dirPath = process.env.DIR_PATH;
 
 test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
   if (!tutorialPaths) throw new Error("TUTORIAL_PATHS not set");
   if (!configPath) throw new Error("CONFIG_PATH not set");
+  if (!dirPath) throw new Error("DIR_PATH not set");
   console.log("tutorials:", tutorialPaths);
   const tutorials = JSON.parse(tutorialPaths);
   console.log("tutorials:", tutorials);
 
   console.log("configPath:", configPath);
-  const this_dirname = process.cwd();
-  console.log("this_dirname:", this_dirname);
-  console.log("process.cwd():", process.cwd());
-  //   const file = existsSync(configPath);
-  //   console.log("file:", file);
 
-  // const testConfig = JSON.parse(readFileSync(path.resolve(configPath), "utf8"));
+  const filePath = join(dirPath, configPath);
+  console.log("filePath:", filePath);
+  const file = existsSync(filePath);
+  console.log("file:", file);
+
+  // const testConfig = JSON.parse(readFileSync(resolve(configPath), "utf8"));
   // console.log("e2eConfig:", testConfig);
 
   if (customTimeout) {

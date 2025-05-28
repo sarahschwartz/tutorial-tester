@@ -25,6 +25,7 @@ runs:
         npx playwright install --with-deps
     - name: Execute test
       env:
+        DIR_PATH: ${{ github.workspace }}
         TUTORIAL_PATHS: >-
           {"paths":${{ inputs.tutorial-paths }}}
       # if: ${{ inputs.mm-wallet == 'false' }}
