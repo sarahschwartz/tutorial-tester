@@ -1,0 +1,51 @@
+name: Tutorial Tester
+description: Runs Playwright tests to test tutorials and guides.
+inputs:
+  tutorial-paths:
+    description: Array of paths for the test to look at, excluding the root path. E.g. '["hello-world", "advanced/guide"]'
+    required: true
+  config-path:
+    description: Filepath of the test configuration file. Expects an IStepConfig type to be exported as default in the file.
+    required: true
+  custom-timeout:
+    description: Number of milliseconds to wait for the test to complete. Defaults to what's in your playwright config.
+    required: false
+  mm-wallet:
+    description: True or false to indicate if the test needs to use a Metamask wallet. Defaults to false.
+    required: false
+    default: 'false'
+
+runs:
+  using: "composite"
+  steps:
+    - name: Ensure Bun deps
+      shell: bash
+      run: bun install --frozen-lockfile
+    - name: Show where we are
+      shell: bash
+      run: |
+        echo "PWD  = $(pwd)"
+        echo "WORK = $GITHUB_WORKSPACE"
+        echo "ACTN = $GITHUB_ACTION_PATH"
+    - name: Execute test
+      if: ${{ inputs..mm-wallet == 'false' }}
+      shell: bash
+      run: |
+        export TERM=xterm-256color
+        export COLUMNS=80
+        export LINES=24
+        export TUTORIAL_PATHS=${{ inputs.tutorial-paths }}
+        export CONFIG_PATH=${{ inputs.config-path }}
+        export CUSTOM_TIMEOUT=${{ inputs.custom-timeout }}
+        xvfb-run bun test:headful tests/test.spec.ts
+    - name: Execute test with metamask
+      if: ${{ inputs..mm-wallet == 'true' }}
+      shell: bash
+      run: |
+        export TERM=xterm-256color
+        export COLUMNS=80
+        export LINES=24
+        export TUTORIAL_PATHS=${{ inputs.tutorial-paths }}
+        export CONFIG_PATH=${{ inputs.config-path }}
+        export CUSTOM_TIMEOUT=${{ inputs.custom-timeout }}
+        xvfb-run bun test:headful tests/mm-test.spec.ts
