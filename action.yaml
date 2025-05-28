@@ -2,7 +2,7 @@ name: Tutorial Tester
 description: Runs Playwright tests to test tutorials and guides.
 inputs:
   tutorial-paths:
-    description: Array of paths for the test to look at, excluding the root path. E.g. '["hello-world", "advanced/guide"]'
+    description: Array of paths for the test to look at, excluding the root path. (e.g. '["hello-world", "advanced/guide"]')
     required: true
   config-path:
     description: Filepath of the test configuration file. Expects an IStepConfig type to be exported as default in the file.
@@ -28,6 +28,11 @@ runs:
         echo "PWD  = $(pwd)"
         echo "WORK = $GITHUB_WORKSPACE"
         echo "ACTN = $GITHUB_ACTION_PATH"
+    - name: Start the docs
+      shell: bash
+      run: |
+        PORT=3030 bun dev
+        sleep 30
     - name: Execute test
       # if: ${{ inputs.mm-wallet == 'false' }}
       shell: bash
@@ -39,7 +44,7 @@ runs:
         export TUTORIAL_PATHS=${{ inputs.tutorial-paths }}
         export CONFIG_PATH=${{ inputs.config-path }}
         export CUSTOM_TIMEOUT=${{ inputs.custom-timeout }}
-        xvfb-run bun test:headful tests/test.spec.ts --config "$GITHUB_WORKSPACE/playwright.config.ts"
+        xvfb-run bun test:headful tests/test.spec.ts
     # - name: Execute test with metamask
     #   if: ${{ inputs.mm-wallet == 'true' }}
     #   shell: bash
