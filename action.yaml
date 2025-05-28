@@ -30,7 +30,7 @@ runs:
         export TERM=xterm-256color
         export COLUMNS=80
         export LINES=24
-        export TUTORIAL_PATHS=${{ inputs.tutorial-paths }}
+        export TUTORIAL_PATHS={ "paths": ${{ inputs.tutorial-paths }} }
         export CONFIG_PATH=${{ inputs.config-path }}
         export CUSTOM_TIMEOUT=${{ inputs.custom-timeout }}
         xvfb-run bun test:headful tests/test.spec.ts
