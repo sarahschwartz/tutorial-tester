@@ -32,7 +32,6 @@ runs:
       shell: bash
       run: |
         PORT=3030 bun dev
-        sleep 30
     - name: Execute test
       # if: ${{ inputs.mm-wallet == 'false' }}
       shell: bash
