@@ -30,6 +30,7 @@ runs:
     - name: Execute test
       # if: ${{ inputs.mm-wallet == 'false' }}
       shell: bash
+      working-directory: ${{ github.action_path }}
       run: |
         export TERM=xterm-256color
         export COLUMNS=80
@@ -41,6 +42,7 @@ runs:
     # - name: Execute test with metamask
     #   if: ${{ inputs.mm-wallet == 'true' }}
     #   shell: bash
+    #   working-directory: ${{ github.action_path }}
     #   run: |
     #     export TERM=xterm-256color
     #     export COLUMNS=80
