@@ -25,12 +25,9 @@ runs:
       working-directory: ${{ github.action_path }}
       run: |
         bun install --frozen-lockfile
-        npx playwright install --with-deps
+        npx playwright install chromium --with-deps
     - name: Execute test
       env:
-        TERM: xterm-256color
-        COLUMNS: 80
-        LINES: 24
         DIR_PATH: ${{ github.workspace }}
         CONFIG_PATH: ${{ inputs.config-path }}
         CUSTOM_TIMEOUT: ${{ inputs.custom-timeout }}
@@ -39,7 +36,11 @@ runs:
           {"paths":${{ inputs.tutorial-paths }}}
       # if: ${{ inputs.mm-wallet == 'false' }}
       working-directory: ${{ github.action_path }}
-      run: xvfb-run bun test:headful tests/test.spec.ts
+      run: |
+        export TERM=xterm-256color
+        export COLUMNS=80
+        export LINES=24
+        xvfb-run bun test:headful tests/test.spec.ts
     - name: Execute test with metamask
       if: ${{ inputs.mm-wallet == 'true' }}
       working-directory: ${{ github.action_path }}
