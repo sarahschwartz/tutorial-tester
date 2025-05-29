@@ -1,15 +1,20 @@
-import type { BrowserContext, Page } from '@playwright/test';
+import type { BrowserContext, Page } from "@playwright/test";
 
-import { runCommand } from './runCommand';
-import { getTestActions } from './getTestActions';
-import { checkForText, visit } from './visit';
-import { compareToFile, extractDataToEnv, modifyFile, writeToFile } from './files';
-import { checkIfBalanceIsZero } from './queries';
-import { setupFolders, startLocalServer, stopServers } from './setup';
-import type { IStepConfig } from './types';
-import { clickButtonByText, fillInput, selectOption } from './button';
-import type { MetaMask } from '@synthetixio/synpress-metamask/types/playwright';
-import { confirmTransaction, connectToDapp, switchNetwork } from './metamask';
+import { runCommand } from "./runCommand";
+import { getTestActions } from "./getTestActions";
+import { checkForText, visit } from "./visit";
+import {
+  compareToFile,
+  extractDataToEnv,
+  modifyFile,
+  writeToFile,
+} from "./files";
+import { checkIfBalanceIsZero } from "./queries";
+import { setupFolders, startLocalServer, stopServers } from "./setup";
+import type { IStepConfig } from "./types";
+import { clickButtonByText, fillInput, selectOption } from "./button";
+import type { MetaMask } from "@synthetixio/synpress-metamask/types/playwright";
+import { confirmTransaction, connectToDapp, switchNetwork } from "./metamask";
 
 export async function setupAndRunTest(
   page: Page,
@@ -17,16 +22,24 @@ export async function setupAndRunTest(
   pageUrls: string[],
   folderName: string,
   config: IStepConfig,
+  dirPath: string,
   metamask?: MetaMask
 ) {
   // SETUP
   await startLocalServer(page);
-  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
-  await setupFolders(folderName);
+  await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+  await setupFolders(folderName, dirPath);
+  console.log("******* config *******:", config)
 
   // TEST
   for (const pageUrl of pageUrls) {
-    await runTest(page, `http://localhost:3030/tutorials${pageUrl}`, config!, metamask, context);
+    await runTest(
+      page,
+      `http://localhost:3030/${pageUrl}`,
+      config,
+      metamask,
+      context
+    );
   }
 
   // SHUT DOWN ANY RUNNING PROJECTS
@@ -41,22 +54,22 @@ export async function runTest(
   context?: BrowserContext
 ) {
   await visit(page, url);
-  console.log('GETTING TEST ACTIONS');
+  console.log("GETTING TEST ACTIONS");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const steps: any[] = await getTestActions(page);
 
-  console.log('STARTING TEST');
+  console.log("STARTING TEST");
   for (const step of steps) {
-    console.log('STEP:', step.id);
+    console.log("STEP:", step.id);
     await page.waitForTimeout(1000);
-    const stepID = step['id'];
+    const stepID = step["id"];
     const stepData = config[stepID];
     if (!stepData) {
-      console.log('STEP DATA NOT FOUND:', stepID);
+      console.log("STEP DATA NOT FOUND:", stepID);
       continue;
     }
     switch (stepData.action) {
-      case 'runCommand':
+      case "runCommand":
         await runCommand(
           page,
           stepID,
@@ -72,13 +85,19 @@ export async function runTest(
           stepData.replaceString
         );
         break;
-      case 'wait':
+      case "wait":
         await page.waitForTimeout(stepData.timeout);
         break;
-      case 'writeToFile':
-        await writeToFile(page, stepID, stepData.filepath, stepData.addSpacesAfter, stepData.useSetData);
+      case "writeToFile":
+        await writeToFile(
+          page,
+          stepID,
+          stepData.filepath,
+          stepData.addSpacesAfter,
+          stepData.useSetData
+        );
         break;
-      case 'modifyFile':
+      case "modifyFile":
         await modifyFile(
           page,
           stepID,
@@ -91,43 +110,48 @@ export async function runTest(
           stepData.getContractId
         );
         break;
-      case 'compareToFile':
+      case "compareToFile":
         await compareToFile(page, stepID, stepData.filepath);
         break;
-      case 'checkIfBalanceIsZero':
+      case "checkIfBalanceIsZero":
         await checkIfBalanceIsZero(stepData.networkUrl, stepData.address);
         break;
-      case 'extractDataToEnv':
-        extractDataToEnv(stepData.dataFilepath, stepData.envFilepath, stepData.variableName, stepData.selector);
+      case "extractDataToEnv":
+        extractDataToEnv(
+          stepData.dataFilepath,
+          stepData.envFilepath,
+          stepData.variableName,
+          stepData.selector
+        );
         break;
-      case 'clickButtonByText':
+      case "clickButtonByText":
         clickButtonByText(page, stepData.buttonText);
         break;
-      case 'visitURL':
+      case "visitURL":
         await visit(page, stepData.url);
         break;
-      case 'findText':
+      case "findText":
         await checkForText(page, stepData.text);
         break;
-      case 'confirmTransaction':
+      case "confirmTransaction":
         await confirmTransaction(context!, metamask!);
         break;
-      case 'connectToDapp':
+      case "connectToDapp":
         await page.waitForTimeout(4000);
-        console.log('Waited for 4 seconds');
-        await connectToDapp(metamask!, stepData.account ?? 'Account 1');
+        console.log("Waited for 4 seconds");
+        await connectToDapp(metamask!, stepData.account ?? "Account 1");
         break;
-      case 'fillInput':
+      case "fillInput":
         await fillInput(page, stepData.text);
         break;
-      case 'selectOption':
+      case "selectOption":
         await selectOption(page, stepData.index);
         break;
-      case 'switchNetwork':
+      case "switchNetwork":
         await switchNetwork(metamask!);
         break;
       default:
-        console.log('STEP NOT FOUND:', stepData);
+        console.log("STEP NOT FOUND:", stepData);
     }
   }
 }

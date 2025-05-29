@@ -8,9 +8,8 @@ inputs:
     description: Filepath of the test configuration file. Expects an IStepConfig type to be exported as default in the file.
     required: true
   folder-name:
-    description: Name of the folder where the generated test files are output. Defaults to 'tests-output'.
-    required: false
-    default: 'tests-output'
+    description: Name of the main project folder created in the tutorial.
+    required: true
   custom-timeout:
     description: Number of milliseconds to wait for the test to complete. Defaults to what's in your playwright config.
     required: false
@@ -26,7 +25,7 @@ runs:
       working-directory: ${{ github.action_path }}
       run: |
         bun install --frozen-lockfile
-        npx playwright install --with-deps
+        bun playwright install chromium --with-deps
     - name: Execute test
       env:
         DIR_PATH: ${{ github.workspace }}

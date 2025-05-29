@@ -43,7 +43,8 @@ test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
       context,
       tutorials.paths,
       folderName,
-      testConfig
+      testConfig,
+      dirPath
     );
 });
 
