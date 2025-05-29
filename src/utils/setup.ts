@@ -5,8 +5,8 @@ import { join } from 'path';
 
 export async function startLocalServer(page: Page) {
   console.log('STARTING...');
-  await page.waitForTimeout(20000);
-  console.log('WAITED 20 SECONDS FOR LOCAL SERVER TO START');
+  await page.waitForTimeout(30 * 1000);
+  console.log('WAITED 30 SECONDS FOR LOCAL SERVER TO START');
 }
 
 export function stopServers() {

@@ -4,7 +4,7 @@ import { clickCopyButton } from './button';
 import fs from 'fs';
 import { join } from 'path';
 import os from 'os';
-import pty from 'node-pty';
+import { spawn } from 'node-pty';
 import { expect } from '@playwright/test';
 
 export async function runCommand(
@@ -54,7 +54,7 @@ export async function runCommand(
     }
 
     if (prompts) {
-      await runWithPrompts(page, command, prompts);
+      await runWithPrompts(command, prompts);
     } else {
       await run(command, saveOutput, checkForOutput, expectError);
     }
@@ -133,10 +133,10 @@ function copyFolder(source: string, destination: string) {
   copyRecursive(source, destination);
 }
 
-export async function runWithPrompts(page: Page, command: string, prompts: string) {
+export async function runWithPrompts(command: string, prompts: string) {
   const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
-  const ptyProcess = pty.spawn(shell, [], {
+  const ptyProcess = spawn(shell, [], {
     name: 'xterm-color',
     cols: 80,
     rows: 30,
