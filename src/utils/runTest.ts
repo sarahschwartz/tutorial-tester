@@ -28,8 +28,7 @@ export async function setupAndRunTest(
   // SETUP
   await startLocalServer(page);
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
-  await setupFolders(folderName, dirPath);
-  console.log("******* config *******:", config)
+  await setupFolders(folderName);
 
   // TEST
   for (const pageUrl of pageUrls) {

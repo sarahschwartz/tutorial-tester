@@ -1,7 +1,6 @@
 import { execSync } from 'child_process';
 import fs from 'fs';
 import type { Page } from '@playwright/test';
-import { join } from 'path';
 
 export async function startLocalServer(page: Page) {
   console.log('STARTING...');
@@ -32,9 +31,9 @@ export function checkIfServersRunning() {
   }
 }
 
-export async function setupFolders(projectFolder: string, dirPath: string) {
+export async function setupFolders(projectFolder: string) {
   console.log('SETTING UP FOLDERS');
-  const outputPath = join(dirPath, 'tests-output');
+  const outputPath = 'tests-output';
   fs.mkdirSync(outputPath, { recursive: true });
   const projectPath = `outputPath/${projectFolder}`;
   if (fs.existsSync(projectPath)) {
