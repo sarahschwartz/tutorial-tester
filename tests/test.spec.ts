@@ -1,10 +1,8 @@
 import { test } from "@playwright/test";
 import { setupAndRunTest } from "../src/utils/runTest";
-import {
-  existsSync,
-  readFileSync
-} from "fs";
+import { existsSync } from "fs";
 import { join } from "path";
+import { pathToFileURL } from 'url';
 
 const tutorialPaths = process.env.TUTORIAL_PATHS;
 const configPath = process.env.CONFIG_PATH;
@@ -35,7 +33,10 @@ test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
     throw new Error(`Config file not found at ${filePath}`);
   }
 
-  const testConfig = JSON.parse(readFileSync(filePath, "utf8"));
+  const url = pathToFileURL(filePath).toString();
+  console.log("url:", url);
+  const mod = await import(url);
+  const testConfig = mod.default;
   console.log("e2eConfig:", testConfig);
 
     await setupAndRunTest(
@@ -46,8 +47,4 @@ test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
       testConfig,
       dirPath
     );
-});
-
-test('Build an ERC20 custom paymaster', async ({ page, context }) => {
-  await setupAndRunTest(page, context, ['/erc20-paymaster'], 'erc20-paymaster');
 });
