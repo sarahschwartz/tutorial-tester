@@ -22,11 +22,13 @@ runs:
   using: "composite"
   steps:
     - name: Install action dependencies
+      shell: bash
       working-directory: ${{ github.action_path }}
       run: |
         bun install --frozen-lockfile
         bun playwright install chromium --with-deps
     - name: Execute test
+      shell: bash
       env:
         DIR_PATH: ${{ github.workspace }}
         CONFIG_PATH: ${{ inputs.config-path }}
