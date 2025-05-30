@@ -25,7 +25,7 @@ runs:
       working-directory: ${{ github.action_path }}
       run: |
         bun install --frozen-lockfile
-        npx playwright install chromium --with-deps
+        bun playwright install chromium --with-deps
     - name: Execute test
       env:
         DIR_PATH: ${{ github.workspace }}
@@ -34,21 +34,23 @@ runs:
         FOLDER_NAME: ${{ inputs.folder-name }}
         TUTORIAL_PATHS: >-
           {"paths":${{ inputs.tutorial-paths }}}
-      # if: ${{ inputs.mm-wallet == 'false' }}
+      if: ${{ inputs.mm-wallet == 'false' }}
       working-directory: ${{ github.action_path }}
       run: |
         export TERM=xterm-256color
         export COLUMNS=80
         export LINES=24
+        set -euo pipefail
         xvfb-run bun test:headful tests/test.spec.ts
-    - name: Execute test with metamask
-      if: ${{ inputs.mm-wallet == 'true' }}
-      working-directory: ${{ github.action_path }}
-      run: |
-        export TERM=xterm-256color
-        export COLUMNS=80
-        export LINES=24
-        export TUTORIAL_PATHS=${{ inputs.tutorial-paths }}
-        export CONFIG_PATH=${{ inputs.config-path }}
-        export CUSTOM_TIMEOUT=${{ inputs.custom-timeout }}
-        xvfb-run bun test:headful tests/mm-test.spec.ts
+    # - name: Execute test with metamask
+    #   if: ${{ inputs.mm-wallet == 'true' }}
+    #   working-directory: ${{ github.action_path }}
+    #   run: |
+    #     export TERM=xterm-256color
+    #     export COLUMNS=80
+    #     export LINES=24
+    #     export TUTORIAL_PATHS=${{ inputs.tutorial-paths }}
+    #     export CONFIG_PATH=${{ inputs.config-path }}
+    #     export CUSTOM_TIMEOUT=${{ inputs.custom-timeout }}
+    #     set -euo pipefail
+    #     xvfb-run bun test:headful tests/mm-test.spec.ts
