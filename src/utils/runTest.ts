@@ -23,10 +23,11 @@ export async function setupAndRunTest(
   folderName: string,
   config: IStepConfig,
   dirPath: string,
+  waitTime: number,
   metamask?: MetaMask
 ) {
   // SETUP
-  await startLocalServer(page);
+  await startLocalServer(page, waitTime);
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await setupFolders(folderName);
 

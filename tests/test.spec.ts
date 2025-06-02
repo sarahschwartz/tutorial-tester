@@ -9,6 +9,7 @@ const configPath = process.env.CONFIG_PATH;
 const customTimeout = process.env.CUSTOM_TIMEOUT;
 const folderName = process.env.FOLDER_NAME;
 const dirPath = process.env.DIR_PATH;
+const waitTime = process.env.WAIT_TIME ? parseInt(process.env.WAIT_TIME) : 45000; // Default to 45 seconds
 
 test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
   if (!tutorialPaths) throw new Error("TUTORIAL_PATHS not set");
@@ -45,6 +46,7 @@ test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
       tutorials.paths,
       folderName,
       testConfig,
-      dirPath
+      dirPath,
+      waitTime
     );
 });

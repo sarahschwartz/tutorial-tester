@@ -13,6 +13,9 @@ inputs:
   custom-timeout:
     description: Number of milliseconds to wait for the test to complete. Defaults to what's in your playwright config.
     required: false
+  wait-time:
+    description: Number of milliseconds to wait before starting the test. Defaults to 45 seconds.
+    required: false
   mm-wallet:
     description: True or false to indicate if the test needs to use a Metamask wallet. Defaults to false.
     required: false
@@ -34,6 +37,7 @@ runs:
         CONFIG_PATH: ${{ inputs.config-path }}
         CUSTOM_TIMEOUT: ${{ inputs.custom-timeout }}
         FOLDER_NAME: ${{ inputs.folder-name }}
+        WAIT_TIME: ${{ inputs.wait-time }}
         TUTORIAL_PATHS: >-
           {"paths":${{ inputs.tutorial-paths }}}
       if: ${{ inputs.mm-wallet == 'false' }}
