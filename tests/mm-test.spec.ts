@@ -1,5 +1,5 @@
 import { testWithMetamask as test } from '../src/utils/wallet-setup/testWithMetamask';
-import { MetaMask } from '@synthetixio/synpress-metamask/types/playwright';
+import { MetaMask } from '@synthetixio/synpress/playwright';
 import setup from '../src/utils/wallet-setup/connected.setup';
 import { setupAndRunTest } from "../src/utils/runTest";
 import { existsSync } from "fs";

@@ -4,7 +4,7 @@
     "rootDir": ".",
     "esModuleInterop": true,
     "exactOptionalPropertyTypes": false, // Allows for `undefined` in `playwright.config.ts`
-    "types": ["cypress"],
+    "types": ["playwright"],
     "sourceMap": false
   },
   "include": ["tests", "src", "playwright.config.ts"],
