@@ -1,6 +1,5 @@
 import { defineWalletSetup } from '@synthetixio/synpress-cache'
-import { getExtensionId } from '@synthetixio/synpress-metamask/src/playwright';
-import { MetaMask } from '@synthetixio/synpress-metamask/types/playwright';
+import { getExtensionId, MetaMask } from '@synthetixio/synpress/playwright';
 import { PASSWORD, SEED_PHRASE } from './config';
 import { switchNetwork } from '../metamask';
 

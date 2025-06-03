@@ -1,5 +1,5 @@
-import type { MetaMask } from '@synthetixio/synpress-metamask/types/playwright';
-import { ERA_TEST_NODE } from './wallet-setup/config';
+import type { MetaMask } from '@synthetixio/synpress/playwright';
+import { ANVIL_ZKSYNC_NODE } from './wallet-setup/config';
 import type { BrowserContext, Page } from '@playwright/test';
 
 export async function connectToDapp(metamask: MetaMask, account: string = 'Account 1') {
@@ -40,11 +40,11 @@ async function getWalletPage(context: BrowserContext) {
 }
 
 // switches the network to a local in-memory node
-export async function switchNetwork(metamask: MetaMask, networkName: string = ERA_TEST_NODE.name) {
+export async function switchNetwork(metamask: MetaMask, networkName: string = ANVIL_ZKSYNC_NODE.name) {
   await metamask.openSettings();
   const SidebarMenus = metamask.homePage.selectors.settings.SettingsSidebarMenus;
   await metamask.openSidebarMenu(SidebarMenus.Advanced);
   await metamask.toggleDismissSecretRecoveryPhraseReminder();
-  await metamask.addNetwork(ERA_TEST_NODE);
+  await metamask.addNetwork(ANVIL_ZKSYNC_NODE);
   await metamask.switchNetwork(networkName, true);
 }

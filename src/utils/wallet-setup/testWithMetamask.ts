@@ -1,5 +1,6 @@
-import { testWithSynpress } from '@synthetixio/synpress/src';
-import { metaMaskFixtures } from '@synthetixio/synpress-metamask/src/playwright';
+import { testWithSynpress } from '@synthetixio/synpress'
+import { metaMaskFixtures } from "@synthetixio/synpress/playwright"
+
 import setup from './connected.setup';
 
 const fixtures = metaMaskFixtures(setup);

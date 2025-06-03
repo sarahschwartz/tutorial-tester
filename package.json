@@ -8,15 +8,16 @@
     "lint": "eslint .",
     "test:headless": "HEADLESS=true playwright test",
     "test:headful": "playwright test",
-    "setup:mm": "synpress tests/utils/wallet-setup",
-    "setup:mm:headless": "synpress tests/utils/wallet-setup --headless"
+    "setup:mm": "synpress src/utils/wallet-setup",
+    "setup:mm:headless": "synpress src/utils/wallet-setup --headless"
   },
   "author": "Sarah Schwartz",
   "license": "MIT",
   "devDependencies": {
     "@eslint/js": "^9.27.0",
     "@playwright/test": "^1.52.0",
-    "@synthetixio/synpress": "4.0.0-alpha.9",
+    "@synthetixio/synpress": "4.1.0",
+    "@synthetixio/synpress-tsconfig": "^0.0.12",
     "eslint": "^9.27.0",
     "globals": "^16.2.0",
     "typescript": "^5.8.3",
