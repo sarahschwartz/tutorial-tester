@@ -1,5 +1,5 @@
 import type { MetaMask } from '@synthetixio/synpress/playwright';
-import { ANVIL_ZKSYNC_NODE } from './wallet-setup/config';
+import { ANVIL_ZKSYNC_NODE } from '../../tests/wallet-setup/config';
 import type { BrowserContext, Page } from '@playwright/test';
 
 export async function connectToDapp(metamask: MetaMask, account: string = 'Account 1') {

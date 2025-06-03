@@ -1,11 +1,14 @@
 {
   "extends": "@synthetixio/synpress-tsconfig/base.json",
   "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
     "rootDir": ".",
-    "esModuleInterop": true,
-    "exactOptionalPropertyTypes": false, // Allows for `undefined` in `playwright.config.ts`
-    "types": ["playwright"],
-    "sourceMap": false
+    "strict": true,
+    "types": ["playwright", "node"],
+    "noEmit": true 
   },
-  "include": ["tests", "src", "playwright.config.ts"],
+  "include": ["tests", "src"]
 }

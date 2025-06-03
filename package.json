@@ -1,15 +1,16 @@
 {
   "name": "tutorial-tester",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Test your tutorials and guides in CI.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build": "ncc build src/index.ts -o dist",
     "lint": "eslint .",
-    "test:headless": "HEADLESS=true playwright test",
-    "test:headful": "playwright test",
-    "setup:mm": "synpress src/utils/wallet-setup",
-    "setup:mm:headless": "synpress src/utils/wallet-setup --headless"
+    "test:headless": "HEADLESS=true playwright test tests/test.spec.ts",
+    "test:headful": "playwright test tests/mm-test.spec.ts",
+    "setup:mm": "METAMASK_VERSION=10.32.2 synpress tests/wallet-setup",
+    "setup:mm:headless": "synpress tests/wallet-setup --headless"
   },
   "author": "Sarah Schwartz",
   "license": "MIT",

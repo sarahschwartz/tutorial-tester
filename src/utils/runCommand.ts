@@ -32,7 +32,12 @@ export async function runCommand(
     const split = replaceString.split('|');
     split.forEach((replaceString) => {
       const splitReplace = replaceString.split(':');
-      command = command?.replace(splitReplace[0], splitReplace[1]);
+      const first = splitReplace[0];
+      const second = splitReplace[1];
+      if(!first || !second) {
+        throw new Error(`Invalid replaceString format: ${replaceString}. Expected format is 'oldValue:newValue'.`);
+      }
+      command = command?.replace(first, second);
     });
   }
   const copied = command;
@@ -154,7 +159,7 @@ export async function runWithPrompts(command: string, prompts: string) {
 
     for (let index = 0; index < promptsArray.length; index++) {
       const promptObject = promptsArray[index];
-      if (data.includes(promptObject.prompt)) {
+      if (promptObject && promptObject.prompt && data.includes(promptObject.prompt)) {
         console.log('FOUND PROMPT:', promptObject.prompt);
         ptyProcess.write(promptObject.answer + '\r');
       }

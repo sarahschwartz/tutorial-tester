@@ -11,7 +11,7 @@ const folderName = process.env.FOLDER_NAME;
 const dirPath = process.env.DIR_PATH;
 const waitTime = process.env.WAIT_TIME ? parseInt(process.env.WAIT_TIME) : 45000; // Default to 45 seconds
 
-test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
+test(`Testing ${folderName}`, async ({ page, context }) => {
   if (!tutorialPaths) throw new Error("TUTORIAL_PATHS not set");
   if (!configPath) throw new Error("CONFIG_PATH not set");
   if (!folderName) throw new Error("FOLDER_NAME not set");
@@ -38,7 +38,6 @@ test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
       tutorials.paths,
       folderName,
       testConfig,
-      dirPath,
       waitTime
     );
 });

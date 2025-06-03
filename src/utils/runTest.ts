@@ -13,7 +13,7 @@ import { checkIfBalanceIsZero } from "./queries";
 import { setupFolders, startLocalServer, stopServers } from "./setup";
 import type { IStepConfig } from "./types";
 import { clickButtonByText, fillInput, selectOption } from "./button";
-import type { MetaMask } from "@synthetixio/synpress-metamask/types/playwright";
+import type { MetaMask } from "@synthetixio/synpress/playwright";
 import { confirmTransaction, connectToDapp, switchNetwork } from "./metamask";
 
 export async function setupAndRunTest(
@@ -22,7 +22,6 @@ export async function setupAndRunTest(
   pageUrls: string[],
   folderName: string,
   config: IStepConfig,
-  dirPath: string,
   waitTime: number,
   metamask?: MetaMask
 ) {

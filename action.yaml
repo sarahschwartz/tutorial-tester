@@ -31,13 +31,6 @@ runs:
       run: |
         bun install --frozen-lockfile
         bun playwright install chromium --with-deps
-
-    # Setup Metamask for frontend paymaster
-    - name: Create Metamask Cache
-      shell: bash
-      working-directory: ${{ github.action_path }}
-      if: ${{ inputs.mm-wallet == 'true' }}
-      run: xvfb-run bun setup:mm
     
     # Run test (without Metamask)
     - name: Execute test
@@ -57,7 +50,7 @@ runs:
         export COLUMNS=80
         export LINES=24
         set -euo pipefail
-        xvfb-run bun test:headful tests/test.spec.ts
+        xvfb-run bun test:headless
 
     # Run test (with Metamask)
     - name: Execute test with metamask
@@ -77,7 +70,8 @@ runs:
         export COLUMNS=80
         export LINES=24
         set -euo pipefail
-        xvfb-run bun test:headful tests/mm-test.spec.ts
+        xvfb-run bun setup:mm
+        xvfb-run bun test:headful
 
     # Upload Playwright report artifact
     - name: Upload Playwright report

@@ -98,7 +98,7 @@ export function compareOutputs(expected: string, actual: string) {
   expect(split1.length === split2.length).toBeTruthy();
   split1.forEach((line, i) => {
     const trimmedLineA = line.trim().replace(/\u00A0/g, " ");
-    const trimmedLineB = split2[i].trim().replace(/\u00A0/g, " ");
+    const trimmedLineB = split2[i]!.trim().replace(/\u00A0/g, " ");
     if (trimmedLineA !== trimmedLineB) {
       console.log("DIFFERENT LINES");
       console.log("LINE A:", trimmedLineA);
