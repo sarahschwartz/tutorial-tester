@@ -20,25 +20,17 @@ test(`Testing ${tutorialPaths}`, async ({ page, context }) => {
     test.setTimeout(parseInt(customTimeout));
   }
 
-  console.log("tutorials:", tutorialPaths);
   const tutorials = JSON.parse(tutorialPaths);
-  console.log("tutorials:", tutorials);
-
-  console.log("configPath:", configPath);
 
   const filePath = join(dirPath, configPath);
-  console.log("filePath:", filePath);
   const fileExists = existsSync(filePath);
-  console.log("fileExists:", fileExists);
   if(!fileExists){
     throw new Error(`Config file not found at ${filePath}`);
   }
 
   const url = pathToFileURL(filePath).toString();
-  console.log("url:", url);
   const mod = await import(url);
   const testConfig = mod.default;
-  console.log("e2eConfig:", testConfig);
 
     await setupAndRunTest(
       page,
