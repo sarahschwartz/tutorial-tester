@@ -65,5 +65,5 @@ runs:
       with:
         name: playwright-report-${{ matrix.tutorial }}
         path: |
-          ${{ github.workspace }}/playwright-report/
+          ${{ github.action_path }}/playwright-report/
         retention-days: 10
