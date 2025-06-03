@@ -78,7 +78,7 @@ runs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: playwright-report-${{ inputs.config-path }}
+        name: playwright-report-${{ inputs.test-file-name }}
         path: |
           ${{ github.action_path }}/playwright-report/
         retention-days: 5
