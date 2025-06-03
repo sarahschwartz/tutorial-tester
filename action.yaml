@@ -24,12 +24,20 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # Install dependencies for test
     - name: Install action dependencies
       shell: bash
       working-directory: ${{ github.action_path }}
       run: |
         bun install --frozen-lockfile
         bun playwright install chromium --with-deps
+
+    # Setup Metamask for frontend paymaster
+    - name: Create Metamask Cache
+      if: ${{ inputs.mm-wallet == 'true' }}
+      run: xvfb-run bun setup:mm
+    
+    # Run test (without Metamask)
     - name: Execute test
       shell: bash
       env:
@@ -48,22 +56,33 @@ runs:
         export LINES=24
         set -euo pipefail
         xvfb-run bun test:headful tests/test.spec.ts
-    # - name: Execute test with metamask
-    #   if: ${{ inputs.mm-wallet == 'true' }}
-    #   working-directory: ${{ github.action_path }}
-    #   run: |
-    #     export TERM=xterm-256color
-    #     export COLUMNS=80
-    #     export LINES=24
-    #     export TUTORIAL_PATHS=${{ inputs.tutorial-paths }}
-    #     export CONFIG_PATH=${{ inputs.config-path }}
-    #     export CUSTOM_TIMEOUT=${{ inputs.custom-timeout }}
-    #     set -euo pipefail
-    #     xvfb-run bun test:headful tests/mm-test.spec.ts
-    - uses: actions/upload-artifact@v4
+
+    # Run test (with Metamask)
+    - name: Execute test with metamask
+      shell: bash
+      env:
+        DIR_PATH: ${{ github.workspace }}
+        CONFIG_PATH: ${{ inputs.config-path }}
+        CUSTOM_TIMEOUT: ${{ inputs.custom-timeout }}
+        FOLDER_NAME: ${{ inputs.folder-name }}
+        WAIT_TIME: ${{ inputs.wait-time }}
+        TUTORIAL_PATHS: >-
+          {"paths":${{ inputs.tutorial-paths }}}
+      if: ${{ inputs.mm-wallet == 'true' }}
+      working-directory: ${{ github.action_path }}
+      run: |
+        export TERM=xterm-256color
+        export COLUMNS=80
+        export LINES=24
+        set -euo pipefail
+        xvfb-run bun test:headful tests/mm-test.spec.ts
+
+    # Upload Playwright report artifact
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v4
       if: always()
       with:
         name: playwright-report-${{ matrix.tutorial }}
         path: |
           ${{ github.action_path }}/playwright-report/
-        retention-days: 10
+        retention-days: 5

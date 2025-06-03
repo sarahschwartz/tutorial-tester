@@ -1,26 +1,50 @@
-// import { testWithMetamask as test } from '../src/utils/wallet-setup/testWithMetamask';
-// import { MetaMask } from '@synthetixio/synpress-metamask/types/playwright';
-// import setup from '../src/utils/wallet-setup/connected.setup';
-// import { setupAndRunTest } from '../src/utils/runTest';
-// import { readFileSync } from 'fs';
-// import path from 'path';
-// const tutorialPaths = process.env.TUTORIAL_PATHS;
-// const configPath = process.env.CONFIG_PATH;
-// const customTimeout = process.env.CUSTOM_TIMEOUT;
+import { testWithMetamask as test } from '../src/utils/wallet-setup/testWithMetamask';
+import { MetaMask } from '@synthetixio/synpress-metamask/types/playwright';
+import setup from '../src/utils/wallet-setup/connected.setup';
+import { setupAndRunTest } from "../src/utils/runTest";
+import { existsSync } from "fs";
+import { join } from "path";
+import { pathToFileURL } from 'url';
 
-// test(`Testing ${tutorialPaths} with metamask`, async ({ page, context, metamaskPage, extensionId }) => {
-//     if (!tutorialPaths) throw new Error("TUTORIAL_PATHS not set");
-//     if (!configPath) throw new Error("CONFIG_PATH not set");
-//     const tutorials = JSON.parse(tutorialPaths);
-//     console.log("tutorials:", tutorials);
-  
-//     const testConfig = JSON.parse(readFileSync(path.resolve(configPath), "utf8"));
-//     console.log("e2eConfig:", testConfig);
+const tutorialPaths = process.env.TUTORIAL_PATHS;
+const configPath = process.env.CONFIG_PATH;
+const customTimeout = process.env.CUSTOM_TIMEOUT;
+const folderName = process.env.FOLDER_NAME;
+const dirPath = process.env.DIR_PATH;
+const waitTime = process.env.WAIT_TIME ? parseInt(process.env.WAIT_TIME) : 45000; // Default to 45 seconds
 
-//   if (customTimeout) {
-//     test.setTimeout(parseInt(customTimeout));
-//   }
-    
-//   const metamask = new MetaMask(context, metamaskPage, setup.walletPassword, extensionId);
-//   await setupAndRunTest(page, context, ['/frontend-paymaster'], 'frontend-paymaster', testConfig, metamask);
-// });
+test(`Testing ${tutorialPaths}`, async ({ page, context, metamaskPage, extensionId }) => {
+  if (!tutorialPaths) throw new Error("TUTORIAL_PATHS not set");
+  if (!configPath) throw new Error("CONFIG_PATH not set");
+  if (!folderName) throw new Error("FOLDER_NAME not set");
+  if (!dirPath) throw new Error("DIR_PATH not set");
+    if (customTimeout) {
+    test.setTimeout(parseInt(customTimeout));
+  }
+
+  const tutorials = JSON.parse(tutorialPaths);
+
+  const filePath = join(dirPath, configPath);
+  const fileExists = existsSync(filePath);
+  if(!fileExists){
+    throw new Error(`Config file not found at ${filePath}`);
+  }
+
+  const url = pathToFileURL(filePath).toString();
+  const mod = await import(url);
+  const testConfig = mod.default;
+
+  const metamask = new MetaMask(context, metamaskPage, setup.walletPassword, extensionId);
+
+    await setupAndRunTest(
+      page,
+      context,
+      tutorials.paths,
+      folderName,
+      testConfig,
+      dirPath,
+      waitTime,
+      metamask
+    );
+});
+
