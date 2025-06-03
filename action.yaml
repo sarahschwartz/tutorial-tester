@@ -35,6 +35,7 @@ runs:
     # Setup Metamask for frontend paymaster
     - name: Create Metamask Cache
       shell: bash
+      working-directory: ${{ github.action_path }}
       if: ${{ inputs.mm-wallet == 'true' }}
       run: xvfb-run bun setup:mm
     
