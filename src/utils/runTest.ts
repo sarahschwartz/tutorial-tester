@@ -54,6 +54,7 @@ export async function runTest(
 ) {
   await visit(page, url);
   console.log("GETTING TEST ACTIONS");
+  await page.waitForTimeout(2000);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const steps: any[] = await getTestActions(page);
 
