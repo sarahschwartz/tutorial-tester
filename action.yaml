@@ -73,12 +73,13 @@ runs:
         xvfb-run bun setup:mm
         xvfb-run bun test:headful
 
-    # # Upload Playwright report artifact
-    # - name: Upload Playwright report
-    #   uses: actions/upload-artifact@v4
-    #   if: always()
-    #   with:
-    #     name: playwright-report-${{ inputs.test-file-name }}-${{ matrix.os }}-${{ github.run_attempt }}
-    #     path: |
-    #       ${{ github.action_path }}/playwright-report/
-    #     retention-days: 5
+    # Upload Playwright report artifact
+    - name: Upload Playwright report
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report-${{ inputs.test-file-name }}-${{ github.sha }}-${{ github.run_attempt }}
+        path: |
+          ${{ github.action_path }}/playwright-report/
+        retention-days: 5
+        overwrite: true
