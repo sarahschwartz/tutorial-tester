@@ -99,14 +99,14 @@ export function compareOutputs(expected: string, actual: string) {
   split1.forEach((line, i) => {
     const trimmedLineA = line.trim().replace(/\u00A0/g, " ");
     const trimmedLineB = split2[i]!.trim().replace(/\u00A0/g, " ");
-    if (trimmedLineA !== trimmedLineB) {
+    const a = normalizeQuotes(trimmedLineA);
+    const b = normalizeQuotes(trimmedLineB);
+    if (a !== b) {
       console.log("DIFFERENT LINES");
-      console.log("LINE A:", trimmedLineA);
-      console.log("LINE B:", trimmedLineB);
+      console.log("LINE A:", a);
+      console.log("LINE B:", b);
     }
-    expect(normalizeQuotes(trimmedLineA)).toEqual(
-      normalizeQuotes(trimmedLineB)
-    );
+    expect(a).toEqual(b);
   });
 }
 
