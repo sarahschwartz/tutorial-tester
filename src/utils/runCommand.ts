@@ -150,28 +150,33 @@ export async function runWithPrompts(command: string, prompts: string | undefine
     env: process.env,
   });
 
-  let promptsArray: { prompt: string | undefined; answer: string | undefined }[];
+  const queue = prompts
+    ? prompts.split('|').map(pair => {
+        const [prompt = '', answer = ''] = pair.split(':');
+        return { prompt: prompt.trim(), answer: answer.trim() };
+      })
+    : [];
 
-  if(prompts){
-    promptsArray = prompts.split('|').map((pair) => {
-    const [prompt, answer] = pair.split(':');
-    return { prompt, answer };
-  });
-}
-let lastData = '';
+  let buffer = '';
+  let lastLogged = '';
 
-  ptyProcess.onData((data) => {
-    if(lastData !== data) console.log('DATA:', data);
-    lastData = data;
+  ptyProcess.onData(data => {
+    if (data !== lastLogged) {
+      console.log('DATA:', data);
+      lastLogged = data;
+      buffer += data;
+    }
 
-    if(promptsArray && promptsArray.length > 0){
-      for (let index = 0; index < promptsArray.length; index++) {
-        const promptObject = promptsArray[index];
-        if (promptObject && promptObject.prompt && data.includes(promptObject.prompt)) {
-          console.log('FOUND PROMPT:', promptObject.prompt, "using answer:", promptObject.answer);
-          ptyProcess.write(promptObject.answer + '\r');
-        }
-      }
+    // return if all prompts are answered
+    if (queue.length === 0 || queue[0] === undefined) return;
+
+    const { prompt, answer } = queue[0];
+
+    if (buffer.includes(prompt)) {
+      console.log(`Answering prompt "${prompt}" with "${answer}"`);
+      ptyProcess.write(answer + '\r');
+      queue.shift();
+      buffer = '';
     }
   });
 
