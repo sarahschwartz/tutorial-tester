@@ -158,9 +158,11 @@ export async function runWithPrompts(command: string, prompts: string | undefine
     return { prompt, answer };
   });
 }
+let lastData = '';
 
   ptyProcess.onData((data) => {
-    console.log('DATA:', data);
+    if(lastData !== data) console.log('DATA:', data);
+    lastData = data;
 
     if(promptsArray && promptsArray.length > 0){
       for (let index = 0; index < promptsArray.length; index++) {
