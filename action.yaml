@@ -20,6 +20,10 @@ inputs:
     description: True or false to indicate if the test needs to use a Metamask wallet. Defaults to false.
     required: false
     default: 'false'
+  debug-mode:
+    description: True or false to set debugging mode with additional command logging. Defaults to false.
+    required: false
+    default: 'false'
 
 runs:
   using: "composite"
@@ -41,6 +45,7 @@ runs:
         CUSTOM_TIMEOUT: ${{ inputs.custom-timeout }}
         FOLDER_NAME: ${{ inputs.folder-name }}
         WAIT_TIME: ${{ inputs.wait-time }}
+        DEBUG_MODE: ${{ inputs.debug-mode }}
         TUTORIAL_PATHS: >-
           {"paths":${{ inputs.tutorial-paths }}}
       if: ${{ inputs.mm-wallet == 'false' }}
@@ -61,6 +66,7 @@ runs:
         CUSTOM_TIMEOUT: ${{ inputs.custom-timeout }}
         FOLDER_NAME: ${{ inputs.folder-name }}
         WAIT_TIME: ${{ inputs.wait-time }}
+        DEBUG_MODE: ${{ inputs.debug-mode }}
         TUTORIAL_PATHS: >-
           {"paths":${{ inputs.tutorial-paths }}}
       if: ${{ inputs.mm-wallet == 'true' }}

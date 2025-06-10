@@ -9,6 +9,7 @@ import { expect } from '@playwright/test';
 
 export async function runCommand(
   page: Page,
+  debugMode: boolean,
   buttonName: string,
   goToFolder: string = 'tests-output',
   projectFolder: string = 'hardhat-project',
@@ -58,7 +59,7 @@ export async function runCommand(
       command = `cd ${goToFolder} && ${command}`;
     }
 
-    if (prompts) {
+    if (prompts || debugMode) {
       await runWithPrompts(command, prompts);
     } else {
       await run(command, saveOutput, checkForOutput, expectError);
@@ -138,7 +139,7 @@ function copyFolder(source: string, destination: string) {
   copyRecursive(source, destination);
 }
 
-export async function runWithPrompts(command: string, prompts: string) {
+export async function runWithPrompts(command: string, prompts: string | undefined) {
   const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
 
   const ptyProcess = spawn(shell, [], {
@@ -149,19 +150,25 @@ export async function runWithPrompts(command: string, prompts: string) {
     env: process.env,
   });
 
-  const promptsArray = prompts.split('|').map((pair) => {
+  let promptsArray: { prompt: string | undefined; answer: string | undefined }[];
+
+  if(prompts){
+    promptsArray = prompts.split('|').map((pair) => {
     const [prompt, answer] = pair.split(':');
     return { prompt, answer };
   });
+}
 
   ptyProcess.onData((data) => {
     console.log('DATA:', data);
 
-    for (let index = 0; index < promptsArray.length; index++) {
-      const promptObject = promptsArray[index];
-      if (promptObject && promptObject.prompt && data.includes(promptObject.prompt)) {
-        console.log('FOUND PROMPT:', promptObject.prompt);
-        ptyProcess.write(promptObject.answer + '\r');
+    if(promptsArray && promptsArray.length > 0){
+      for (let index = 0; index < promptsArray.length; index++) {
+        const promptObject = promptsArray[index];
+        if (promptObject && promptObject.prompt && data.includes(promptObject.prompt)) {
+          console.log('FOUND PROMPT:', promptObject.prompt);
+          ptyProcess.write(promptObject.answer + '\r');
+        }
       }
     }
   });

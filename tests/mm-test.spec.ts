@@ -12,6 +12,7 @@ const customTimeout = process.env.CUSTOM_TIMEOUT;
 const folderName = process.env.FOLDER_NAME;
 const dirPath = process.env.DIR_PATH;
 const waitTime = process.env.WAIT_TIME ? parseInt(process.env.WAIT_TIME) : 45000; // Default to 45 seconds
+const debugMode = process.env.DEBUG_MODE === 'true';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 test(`Testing ${folderName}`, async ({ page, context, metamaskPage, extensionId }: any) => {
@@ -45,6 +46,7 @@ test(`Testing ${folderName}`, async ({ page, context, metamaskPage, extensionId 
       folderName,
       testConfig,
       waitTime,
+      debugMode,
       metamask
     );
 });
