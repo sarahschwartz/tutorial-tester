@@ -168,7 +168,7 @@ let lastData = '';
       for (let index = 0; index < promptsArray.length; index++) {
         const promptObject = promptsArray[index];
         if (promptObject && promptObject.prompt && data.includes(promptObject.prompt)) {
-          console.log('FOUND PROMPT:', promptObject.prompt);
+          console.log('FOUND PROMPT:', promptObject.prompt, "using answer:", promptObject.answer);
           ptyProcess.write(promptObject.answer + '\r');
         }
       }
