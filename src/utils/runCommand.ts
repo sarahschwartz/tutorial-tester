@@ -174,11 +174,11 @@ export async function runWithPrompts(command: string, prompts: string | undefine
 
     if (buffer.includes(prompt)) {
       console.log(`Answering prompt "${prompt}" with "${answer}"`);
-      ptyProcess.write(answer + '\r');
+      ptyProcess.write(answer + '\n');
       queue.shift();
       buffer = '';
     }
   });
 
-  ptyProcess.write(command + '\r');
+  ptyProcess.write(command + '\n');
 }
