@@ -24,6 +24,7 @@ export async function setupAndRunTest(
   config: IStepConfig,
   waitTime: number,
   debugMode: boolean,
+  dirPath: string,
   metamask?: MetaMask
 ) {
   // SETUP
@@ -38,6 +39,7 @@ export async function setupAndRunTest(
       `http://localhost:3030/${pageUrl}`,
       config,
       debugMode,
+      dirPath,
       metamask,
       context,
     );
@@ -52,6 +54,7 @@ export async function runTest(
   url: string,
   config: IStepConfig,
   debugMode: boolean,
+  dirPath: string,
   metamask?: MetaMask,
   context?: BrowserContext
 ) {
@@ -76,6 +79,7 @@ export async function runTest(
         await runCommand(
           page,
           debugMode,
+          dirPath,
           stepID,
           stepData.commandFolder,
           stepData.projectFolder,
@@ -87,6 +91,7 @@ export async function runTest(
           stepData.checkForOutput,
           stepData.expectError,
           stepData.replaceString,
+          stepData.runFromSourceDir
         );
         break;
       case "wait":

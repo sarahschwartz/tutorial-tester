@@ -10,6 +10,7 @@ import { expect } from '@playwright/test';
 export async function runCommand(
   page: Page,
   debugMode: boolean,
+  dirPath: string,
   buttonName: string,
   goToFolder: string = 'tests-output',
   projectFolder: string = 'hardhat-project',
@@ -20,7 +21,8 @@ export async function runCommand(
   saveOutput?: string,
   checkForOutput?: string,
   expectError?: string,
-  replaceString?: string
+  replaceString?: string,
+  runFromSourceDir?: boolean
 ) {
   const thisWaitTime = waitTime ? waitTime : prompts ? 35000 : 12000;
   console.log('WAIT TIME', thisWaitTime);
@@ -62,18 +64,19 @@ export async function runCommand(
     if (prompts || debugMode) {
       await runWithPrompts(command, prompts);
     } else {
-      await run(command, saveOutput, checkForOutput, expectError);
+      const dir = runFromSourceDir ? dirPath : undefined;
+      await run(command, saveOutput, checkForOutput, expectError, dir);
     }
     await page.waitForTimeout(thisWaitTime);
     console.log(`waited ${thisWaitTime / 1000} seconds`);
   }
 }
 
-async function run(command: string, saveOutput?: string, checkForOutput?: string, expectError?: string): Promise<void> {
+async function run(command: string, saveOutput?: string, checkForOutput?: string, expectError?: string, dir?: string): Promise<void> {
   console.log('RUNNING COMMAND:', command);
 
   return new Promise<void>((resolve, reject) => {
-    exec(command, { encoding: 'utf-8', maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
+    exec(command, { cwd: dir || process.cwd(), encoding: 'utf-8', maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
       if (error) {
         if (expectError) {
           console.log('EXPECT ERROR', expectError);

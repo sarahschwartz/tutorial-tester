@@ -47,6 +47,7 @@ test(`Testing ${folderName}`, async ({ page, context, metamaskPage, extensionId 
       testConfig,
       waitTime,
       debugMode,
+      dirPath,
       metamask
     );
 });

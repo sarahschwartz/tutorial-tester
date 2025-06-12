@@ -40,6 +40,7 @@ test(`Testing ${folderName}`, async ({ page, context }) => {
       folderName,
       testConfig,
       waitTime,
-      debugMode
+      debugMode,
+      dirPath
     );
 });
