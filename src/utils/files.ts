@@ -6,6 +6,9 @@ import type { RangeOrIntArray, Selector, YamlData } from "./types";
 import YAML from "yaml";
 import { ethers } from "ethers";
 
+import dotenv from "dotenv";
+dotenv.config();
+
 export async function writeToFile(
   page: Page,
   buttonName: string,
@@ -32,9 +35,20 @@ export async function modifyFile(
   atLine?: number,
   removeLines?: RangeOrIntArray,
   useSetData?: string,
-  deploymentFilePath?: string
+  deploymentFilePath?: string,
+  trim: boolean = true
 ) {
   let contentText = useSetData;
+
+  if (contentText) {
+    // replace environment variables in the command
+    contentText = contentText.replace(/<([A-Za-z_][A-Za-z0-9_]*)>/g, (_, v) => {
+      console.log("REPLACE ENV:", v);
+      const envVar = process.env[v];
+      console.log("ENV VAR:", envVar);
+      return envVar ?? "";
+    });
+  }
 
   if (deploymentFilePath) {
     const contractId = getContractId(deploymentFilePath);
@@ -48,7 +62,9 @@ export async function modifyFile(
   if (!contentText) {
     contentText = await clickCopyButton(page, buttonName);
   }
-  contentText = contentText.trim().replace(/\u00A0/g, " ");
+  if (trim) {
+    contentText = contentText.trim().replace(/\u00A0/g, " ");
+  }
   const spacesBefore = addSpacesBefore ? "\n".repeat(addSpacesBefore) : "";
   const spacesAfter = addSpacesAfter ? "\n".repeat(addSpacesAfter) : "";
   if (!atLine && !removeLines) {
@@ -75,6 +91,7 @@ export async function modifyFile(
     const finalContent = lines
       .filter((line: string) => line !== "~~~REMOVE~~~")
       .join("\n");
+
     writeFileSync(filePath, finalContent, "utf8");
   }
 }
@@ -134,15 +151,25 @@ export function extractDataToEnv(
     console.log("DATA FROM YAML:", data);
   }
 
-  if (file.includes(variableName)) {
+  if (envFilepath.trim() === ".env") {
+    console.log("envFilepath:", envFilepath);
+    process.env[variableName] = data;
+  }
+
+  const envFile = readFileSync(envFilepath, "utf8");
+
+  if (envFile.includes(variableName)) {
     // modify the existing variable
     const lines = readFileSync(envFilepath, "utf8").split("\n");
+    let found = false;
     const newLines = lines.map((line) => {
-      if (line.includes(variableName)) {
+      if (line.startsWith(`${variableName}=`)) {
+        found = true;
         return `${variableName}=${data}`;
       }
       return line;
     });
+    if (!found) newLines.push(`${variableName}=${data}`);
     writeFileSync(envFilepath, newLines.join("\n"));
     return;
   }

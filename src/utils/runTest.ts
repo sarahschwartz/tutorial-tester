@@ -116,7 +116,8 @@ export async function runTest(
           stepData.atLine,
           stepData.removeLines,
           stepData.useSetData,
-          stepData.getContractId
+          stepData.getContractId,
+          stepData.trim
         );
         break;
       case "compareToFile":
