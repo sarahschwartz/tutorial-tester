@@ -140,6 +140,7 @@ export function extractDataToEnv(
   selector: Selector
 ) {
   const file = readFileSync(dataFilepath, { encoding: "utf8" });
+  console.log("FILE CONTENTS:", file);
   let data;
 
   if ("regex" in selector) {
