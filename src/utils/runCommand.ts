@@ -1,19 +1,19 @@
-import type { Page } from '@playwright/test';
-import { exec } from 'node:child_process';
-import { clickCopyButton } from './button';
-import fs from 'fs';
-import { join } from 'path';
-import os from 'os';
-import { spawn } from 'node-pty';
-import { expect } from '@playwright/test';
+import type { Page } from "@playwright/test";
+import { exec } from "node:child_process";
+import { clickCopyButton } from "./button";
+import fs from "fs";
+import { join } from "path";
+import os from "os";
+import { spawn } from "node-pty";
+import { expect } from "@playwright/test";
 
 export async function runCommand(
   page: Page,
   debugMode: boolean,
   dirPath: string,
   buttonName: string,
-  goToFolder: string = 'tests-output',
-  projectFolder: string = 'hardhat-project',
+  goToFolder: string = "tests-output",
+  projectFolder: string = "hardhat-project",
   waitTime?: number,
   preCommand?: string,
   useSetCommand?: string,
@@ -25,33 +25,35 @@ export async function runCommand(
   runFromSourceDir?: boolean
 ) {
   const thisWaitTime = waitTime ? waitTime : prompts ? 30000 : 10000;
-  console.log('WAIT TIME', thisWaitTime);
+  console.log("WAIT TIME", thisWaitTime);
   let command = useSetCommand;
   if (!command) {
     command = await clickCopyButton(page, buttonName);
-    console.log('COPIED', command);
+    console.log("COPIED", command);
   }
   if (replaceString) {
-    const split = replaceString.split('|');
+    const split = replaceString.split("|");
     split.forEach((replaceString) => {
-      const splitReplace = replaceString.split(':');
+      const splitReplace = replaceString.split(":");
       const first = splitReplace[0];
       const second = splitReplace[1];
-      if(!first || !second) {
-        throw new Error(`Invalid replaceString format: ${replaceString}. Expected format is 'oldValue:newValue'.`);
+      if (!first || !second) {
+        throw new Error(
+          `Invalid replaceString format: ${replaceString}. Expected format is 'oldValue:newValue'.`
+        );
       }
       command = command?.replace(first, second);
     });
   }
   const copied = command;
-  const newHardhatProject = command.includes('npx hardhat init');
+  const newHardhatProject = command.includes("npx hardhat init");
 
   if (newHardhatProject) {
     await createNewHHProject(goToFolder, projectFolder);
   } else {
     if (preCommand) {
-      if (preCommand.includes('<COMMAND>')) {
-        command = preCommand.replace('<COMMAND>', copied.trimEnd());
+      if (preCommand.includes("<COMMAND>")) {
+        command = preCommand.replace("<COMMAND>", copied.trimEnd());
       } else {
         command = preCommand + copied;
       }
@@ -61,60 +63,88 @@ export async function runCommand(
       command = `cd ${goToFolder} && ${command}`;
     }
 
-    if (prompts || debugMode) {
+    if (prompts) {
       await runWithPrompts(command, prompts);
     } else {
       const dir = runFromSourceDir ? dirPath : undefined;
-      await run(command, saveOutput, checkForOutput, expectError, dir);
+      await run(
+        command,
+        saveOutput,
+        checkForOutput,
+        expectError,
+        dir,
+        debugMode
+      );
     }
     await page.waitForTimeout(thisWaitTime);
     console.log(`waited ${thisWaitTime / 1000} seconds`);
   }
 }
 
-async function run(command: string, saveOutput?: string, checkForOutput?: string, expectError?: string, dir?: string): Promise<void> {
-  console.log('RUNNING COMMAND:', command);
+async function run(
+  command: string,
+  saveOutput?: string,
+  checkForOutput?: string,
+  expectError?: string,
+  dir?: string,
+  debugMode?: boolean
+): Promise<void> {
+  console.log("RUNNING COMMAND:", command);
 
   return new Promise<void>((resolve, reject) => {
-    exec(command, { cwd: dir || process.cwd(), encoding: 'utf-8', maxBuffer: 1024 * 1024 * 10 }, (error, stdout, stderr) => {
-      if (error) {
-        if (expectError) {
-          console.log('EXPECT ERROR', expectError);
-          const hasError = [error.message, stdout, stderr].some((message) => message.includes(expectError));
-          console.log('HAS ERROR', hasError);
-          if (hasError) {
-            resolve();
+    exec(
+      command,
+      {
+        cwd: dir || process.cwd(),
+        encoding: "utf-8",
+        maxBuffer: 1024 * 1024 * 10,
+      },
+      (error, stdout, stderr) => {
+        if (error) {
+          if (expectError) {
+            console.log("EXPECT ERROR", expectError);
+            const hasError = [error.message, stdout, stderr].some((message) =>
+              message.includes(expectError)
+            );
+            console.log("HAS ERROR", hasError);
+            if (hasError) {
+              resolve();
+            } else {
+              console.log("ERROR:", error);
+              reject(new Error("Unexpected error: " + error.message));
+            }
           } else {
-            console.log('ERROR:', error);
-            reject(new Error('Unexpected error: ' + error.message));
+            console.log("ERROR:", error);
+            reject(new Error("Unexpected error: " + error.message));
           }
         } else {
-          console.log('ERROR:', error);
-          reject(new Error('Unexpected error: ' + error.message));
-        }
-      } else {
-        if (checkForOutput) {
-          expect(stdout).toContain(checkForOutput);
-          console.log('✅ FOUND OUTPUT:', checkForOutput);
-        }
+          if(debugMode) {
+            console.log("STDOUT:", stdout);
+            if(stderr) console.log("STDERR:", stderr);
+          }
+          if (checkForOutput) {
+            expect(stdout).toContain(checkForOutput);
+            console.log("✅ FOUND OUTPUT:", checkForOutput);
+          }
 
-        if (saveOutput && stdout) {
-          fs.writeFileSync(saveOutput, stdout);
-        }
+          if (saveOutput && stdout) {
+            fs.writeFileSync(saveOutput, stdout);
+          }
 
-        resolve();
+          resolve();
+        }
       }
-    });
+    );
   });
 }
 
 async function createNewHHProject(goToFolder: string, projectFolder: string) {
-  const repoDir = 'hardhat';
+  const repoDir = "hardhat";
   if (!fs.existsSync(join(goToFolder, repoDir))) {
     const command = `cd ${goToFolder} && git clone https://github.com/NomicFoundation/hardhat.git`;
     await run(command);
   }
-  const folderToCopy = 'packages/hardhat-core/sample-projects/typescript';
+  const folderToCopy = "packages/hardhat-core/sample-projects/typescript";
 
   const sourceFolder = join(goToFolder, repoDir, folderToCopy);
   const destinationFolder = join(goToFolder, projectFolder);
@@ -142,11 +172,14 @@ function copyFolder(source: string, destination: string) {
   copyRecursive(source, destination);
 }
 
-export async function runWithPrompts(command: string, prompts: string | undefined) {
-  const shell = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+export async function runWithPrompts(
+  command: string,
+  prompts: string | undefined
+) {
+  const shell = os.platform() === "win32" ? "powershell.exe" : "bash";
 
   const ptyProcess = spawn(shell, [], {
-    name: 'xterm-color',
+    name: "xterm-color",
     cols: 80,
     rows: 30,
     cwd: process.cwd(),
@@ -154,18 +187,18 @@ export async function runWithPrompts(command: string, prompts: string | undefine
   });
 
   const queue = prompts
-    ? prompts.split('|').map(pair => {
-        const [prompt = '', answer = ''] = pair.split(':');
+    ? prompts.split("|").map((pair) => {
+        const [prompt = "", answer = ""] = pair.split(":");
         return { prompt: prompt.trim(), answer: answer.trim() };
       })
     : [];
 
-  let buffer = '';
-  let lastLogged = '';
+  let buffer = "";
+  let lastLogged = "";
 
-  ptyProcess.onData(data => {
+  ptyProcess.onData((data) => {
     if (data !== lastLogged) {
-      console.log('DATA:', data);
+      console.log("DATA:", data);
       lastLogged = data;
       buffer += data;
     }
@@ -177,11 +210,11 @@ export async function runWithPrompts(command: string, prompts: string | undefine
 
     if (buffer.includes(prompt)) {
       console.log(`Answering prompt "${prompt}" with "${answer}"`);
-      ptyProcess.write(answer + '\n');
+      ptyProcess.write(answer + "\n");
       queue.shift();
-      buffer = '';
+      buffer = "";
     }
   });
 
-  ptyProcess.write(command + '\n');
+  ptyProcess.write(command + "\n");
 }
