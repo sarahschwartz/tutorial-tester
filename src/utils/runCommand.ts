@@ -144,12 +144,12 @@ async function createNewHHProject(goToFolder: string, projectFolder: string) {
     const command = `cd ${goToFolder} && git clone https://github.com/NomicFoundation/hardhat.git`;
     await run(command);
   }
-  const folderToCopy = "packages/hardhat-core/sample-projects/typescript";
+  const folderToCopy = "v-next/example-project";
 
   const sourceFolder = join(goToFolder, repoDir, folderToCopy);
   const destinationFolder = join(goToFolder, projectFolder);
   copyFolder(sourceFolder, destinationFolder);
-  const installCommand = `cd ${destinationFolder} && npm init -y && npm install --save-dev "hardhat@latest" "@nomicfoundation/hardhat-toolbox@^5.0.0" `;
+  const installCommand = `cd ${destinationFolder} && npm install`;
   await run(installCommand);
 }
 
