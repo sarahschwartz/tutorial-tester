@@ -139,14 +139,7 @@ async function run(
 }
 
 async function createNewHHProject(goToFolder: string, projectFolder: string) {
-  const repoDir = "hardhat";
-  if (!fs.existsSync(join(goToFolder, repoDir))) {
-    const command = `cd ${goToFolder} && git clone https://github.com/NomicFoundation/hardhat.git`;
-    await run(command);
-  }
-  const folderToCopy = "v-next/example-project";
-
-  const sourceFolder = join(goToFolder, repoDir, folderToCopy);
+  const sourceFolder = "src/hardhat";
   const destinationFolder = join(goToFolder, projectFolder);
   copyFolder(sourceFolder, destinationFolder);
   const installCommand = `cd ${destinationFolder} && npm install`;
