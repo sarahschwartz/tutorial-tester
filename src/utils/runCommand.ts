@@ -46,7 +46,7 @@ export async function runCommand(
     });
   }
   const copied = command;
-  const newHardhatProject = command.includes("npx hardhat init");
+  const newHardhatProject = command.includes("hardhat --init");
 
   if (newHardhatProject) {
     await createNewHHProject(goToFolder, projectFolder);
